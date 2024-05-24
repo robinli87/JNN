@@ -6,11 +6,12 @@ import random
 class JNN:
     def __init__(self, structure=[1, 1, 1], training_inputs=None, training_outputs=None):
         self.structure = structure
-        self.learning_rate = 0.1
+        self.learning_rate = 0.001
         self.training_inputs = training_inputs
         self.training_outputs = training_outputs
         self.dt = 0.00001
         self.alpha = 0
+        self.decay = 1
 
 
         self.weights = [random.gauss(0, 0.5), random.gauss(0, 0.5), random.gauss(0, 0.5)]
@@ -28,7 +29,8 @@ class JNN:
 
     def activate(self, Z):
         #let's do tanh'
-        A = Z ** 2
+        #swish:
+        A = Z ** 3 * self.decay
         return(A)
 
     def loss(self, local_inputs, local_outputs, weights, biases):
@@ -68,6 +70,18 @@ class JNN:
 
             self.biases[i] -= self.learning_rate * (gradient + self.biases_momentum[i] * self.alpha)
             self.biases_momentum[i] = gradient
+
+        #train the hyperparameter within swish
+        self.decay += self.dt
+        upper = self.loss(self.training_inputs, self.training_outputs, self.weights, self.biases)
+        self.decay -= 2 * self.dt
+        lower = upper = self.loss(self.training_inputs, self.training_outputs, self.weights, self.biases)
+        self.decay += self.dt
+
+        gradient = (up_loss - down_loss) / (2 * self.dt)
+
+        self.decay -= self.learning_rate * gradient
+
 
         return(self.weights, self.biases)
 
