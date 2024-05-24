@@ -46,7 +46,7 @@ import threading
 
 import reyhan
 
-shape = [1, 10, 10, 10, 10, 1]
+shape = [1, 1, 1, 1, 1, 1]
 sample_inputs = []
 sample_outputs = []
 
@@ -57,7 +57,7 @@ for j in range(0, 10):
     for i in range(0, 100):
         xi = np.random.uniform(0, math.pi/2, size=(1))
         sample_inputs[j].append(xi)
-        sample_outputs[j].append(np.sin(xi))
+        sample_outputs[j].append(xi ** 2)
 
 AI = reyhan.JNN(shape, training_inputs=sample_inputs[0], training_outputs=sample_outputs[0])
 

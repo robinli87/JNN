@@ -59,13 +59,12 @@ class JNN:
 
 
     def activate(self, vector):
-        S = np.tanh(vector)
+        S = vector ** 2
         return(S)
 
     def activate_differential(self, vector):
-        S = np.cosh(vector)
-        S = np.dot(S, S)
-        return(1 / S)
+        S = 2 * np.dot(vector, vector)
+        return(S)
 
     def loss(self, sample_inputs, sample_outputs, W, J, B):
         total = 0
@@ -213,7 +212,7 @@ class JNN:
         if default_jumpers != None:
             self.J = default_jumpers
 
-        self.learning_rate = 0.01
+        self.learning_rate = 0.0012
 
         #benchmark:
         self.benchmark = self.loss(self.training_inputs, self.training_outputs,
@@ -229,7 +228,7 @@ class JNN:
 
         epoch = 0
 
-        while epoch <= 500:
+        while epoch <= 1000:
             self.benchmark = new_loss
             self.backpropagation(self.training_inputs, self.training_outputs)
 
@@ -238,6 +237,10 @@ class JNN:
 
             epoch += 1
             #self.learning_rate = 1 / (1 + 0.01* epoch)
+            # if new_loss > self.benchmark:
+            #     self.learning_rate = self.learning_rate * 0.9
+            # else:
+            #     self.learning_rate = self.learning_rate * 1.01
             print(new_loss)
 
 
